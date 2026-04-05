@@ -4,6 +4,7 @@ import { Search, Plus, Filter, Edit, Package, AlertCircle, CheckCircle, Download
 type EquipoEstado = 'operativo' | 'mantenimiento' | 'fuera-servicio' | 'baja';
 type EquipoCategoria = 'diagnostico' | 'terapia' | 'soporte' | 'laboratorio';
 
+// Estructura de datos para representar un equipo biomédico
 interface Equipo {
   id: string;
   codigo: string;
@@ -20,10 +21,16 @@ interface Equipo {
 }
 
 export default function BiomedicalInventory() {
+  // Estado para almacenar el texto de búsqueda
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Estado para filtrar por condición del equipo
   const [filterEstado, setFilterEstado] = useState<EquipoEstado | 'todos'>('todos');
+
+  // Estado para filtrar por categoría del equipo
   const [filterCategoria, setFilterCategoria] = useState<EquipoCategoria | 'todas'>('todas');
 
+  // Datos simulados del inventario para mostrar el funcionamiento del módulo
   const [equipos] = useState<Equipo[]>([
     {
       id: '1',
@@ -139,6 +146,7 @@ export default function BiomedicalInventory() {
     }
   ]);
 
+  // Configuración visual según el estado del equipo
   const getEstadoConfig = (estado: EquipoEstado) => {
     const configs = {
       operativo: {
@@ -165,6 +173,7 @@ export default function BiomedicalInventory() {
     return configs[estado];
   };
 
+  // Configuración visual según la categoría del equipo
   const getCategoriaColor = (categoria: EquipoCategoria) => {
     const colors = {
       diagnostico: 'bg-blue-100 text-blue-700',
@@ -175,38 +184,43 @@ export default function BiomedicalInventory() {
     return colors[categoria];
   };
 
+  // Filtro dinámico por texto, estado y categoría
   const filteredEquipos = equipos.filter(equipo => {
-    const matchesSearch = equipo.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         equipo.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         equipo.marca.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         equipo.modelo.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      equipo.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      equipo.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      equipo.marca.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      equipo.modelo.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesEstado = filterEstado === 'todos' || equipo.estado === filterEstado;
     const matchesCategoria = filterCategoria === 'todas' || equipo.categoria === filterCategoria;
+
     return matchesSearch && matchesEstado && matchesCategoria;
   });
 
+  // Tarjetas de resumen para mostrar el estado general del inventario
   const stats = [
-    { 
-      label: 'Total Equipos', 
-      value: equipos.length, 
+    {
+      label: 'Total Equipos',
+      value: equipos.length,
       color: 'text-gray-700',
       bgColor: 'bg-gray-100'
     },
-    { 
-      label: 'Operativos', 
-      value: equipos.filter(e => e.estado === 'operativo').length, 
+    {
+      label: 'Operativos',
+      value: equipos.filter(e => e.estado === 'operativo').length,
       color: 'text-[#39A935]',
       bgColor: 'bg-[#39A935]/10'
     },
-    { 
-      label: 'En Mantenimiento', 
-      value: equipos.filter(e => e.estado === 'mantenimiento').length, 
+    {
+      label: 'En Mantenimiento',
+      value: equipos.filter(e => e.estado === 'mantenimiento').length,
       color: 'text-yellow-600',
       bgColor: 'bg-yellow-100'
     },
-    { 
-      label: 'Fuera de Servicio', 
-      value: equipos.filter(e => e.estado === 'fuera-servicio').length, 
+    {
+      label: 'Fuera de Servicio',
+      value: equipos.filter(e => e.estado === 'fuera-servicio').length,
       color: 'text-red-600',
       bgColor: 'bg-red-100'
     }
@@ -214,12 +228,14 @@ export default function BiomedicalInventory() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Encabezado principal del módulo */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-gray-900">Inventario de Equipos Biomédicos</h2>
           <p className="text-gray-600">Gestión y control del inventario de equipamiento médico</p>
         </div>
+
+        {/* Botones de acción principal */}
         <div className="flex items-center space-x-3">
           <button className="flex items-center justify-center space-x-2 px-4 py-3 border-2 border-[#FF6B00] text-[#FF6B00] hover:bg-[#FF6B00] hover:text-white rounded-xl transition-all">
             <Download className="w-5 h-5" />
@@ -232,7 +248,7 @@ export default function BiomedicalInventory() {
         </div>
       </div>
 
-      {/* Estadísticas */}
+      {/* Tarjetas de resumen del inventario */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
           <div key={index} className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
@@ -244,7 +260,7 @@ export default function BiomedicalInventory() {
         ))}
       </div>
 
-      {/* Filtros */}
+      {/* Sección de búsqueda y filtros */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
@@ -290,7 +306,7 @@ export default function BiomedicalInventory() {
         </div>
       </div>
 
-      {/* Tabla de Equipos */}
+      {/* Tabla principal del inventario */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -310,7 +326,7 @@ export default function BiomedicalInventory() {
               {filteredEquipos.map((equipo) => {
                 const estadoConfig = getEstadoConfig(equipo.estado);
                 const EstadoIcon = estadoConfig.icon;
-                
+
                 return (
                   <tr key={equipo.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -340,6 +356,8 @@ export default function BiomedicalInventory() {
                         <span>{estadoConfig.label}</span>
                       </div>
                     </td>
+
+                    {/* Botones de acción del módulo */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="flex items-center space-x-2">
                         <button className="p-2 hover:bg-blue-50 rounded-lg transition-colors group">

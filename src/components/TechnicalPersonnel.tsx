@@ -4,6 +4,7 @@ import { Search, Plus, Filter, UserCheck, Clock, Briefcase, Award, Mail, Phone, 
 type PersonalEstado = 'activo' | 'vacaciones' | 'incapacidad' | 'inactivo';
 type PersonalEspecialidad = 'electronica' | 'mecanica' | 'refrigeracion' | 'sistemas' | 'general';
 
+// Estructura de datos para representar al personal técnico
 interface Personal {
   id: string;
   codigo: string;
@@ -21,10 +22,16 @@ interface Personal {
 }
 
 export default function TechnicalPersonnel() {
+  // Estado para almacenar el texto de búsqueda
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Estado para filtrar por estado del personal
   const [filterEstado, setFilterEstado] = useState<PersonalEstado | 'todos'>('todos');
+
+  // Estado para filtrar por especialidad técnica
   const [filterEspecialidad, setFilterEspecialidad] = useState<PersonalEspecialidad | 'todas'>('todas');
 
+  // Datos simulados del personal técnico del sistema
   const [personal] = useState<Personal[]>([
     {
       id: '1',
@@ -148,6 +155,7 @@ export default function TechnicalPersonnel() {
     }
   ]);
 
+  // Configuración visual según el estado del personal
   const getEstadoConfig = (estado: PersonalEstado) => {
     const configs = {
       activo: {
@@ -174,6 +182,7 @@ export default function TechnicalPersonnel() {
     return configs[estado];
   };
 
+  // Configuración visual según la especialidad del técnico
   const getEspecialidadColor = (especialidad: PersonalEspecialidad) => {
     const colors = {
       electronica: 'bg-purple-100 text-purple-700',
@@ -185,37 +194,42 @@ export default function TechnicalPersonnel() {
     return colors[especialidad];
   };
 
+  // Filtro dinámico por texto, estado y especialidad
   const filteredPersonal = personal.filter(p => {
-    const matchesSearch = p.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         p.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         p.cargo.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      p.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.cargo.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesEstado = filterEstado === 'todos' || p.estado === filterEstado;
     const matchesEspecialidad = filterEspecialidad === 'todas' || p.especialidad === filterEspecialidad;
+
     return matchesSearch && matchesEstado && matchesEspecialidad;
   });
 
+  // Tarjetas de resumen para mostrar el estado general del personal
   const stats = [
-    { 
-      label: 'Total Personal', 
-      value: personal.length, 
+    {
+      label: 'Total Personal',
+      value: personal.length,
       color: 'text-gray-700',
       icon: Briefcase
     },
-    { 
-      label: 'Personal Activo', 
-      value: personal.filter(p => p.estado === 'activo').length, 
+    {
+      label: 'Personal Activo',
+      value: personal.filter(p => p.estado === 'activo').length,
       color: 'text-[#39A935]',
       icon: UserCheck
     },
-    { 
-      label: 'Órdenes Asignadas', 
-      value: personal.reduce((sum, p) => sum + p.ordenesAsignadas, 0), 
+    {
+      label: 'Órdenes Asignadas',
+      value: personal.reduce((sum, p) => sum + p.ordenesAsignadas, 0),
       color: 'text-blue-600',
       icon: Clock
     },
-    { 
-      label: 'Órdenes Completadas', 
-      value: personal.reduce((sum, p) => sum + p.ordenesCompletadas, 0), 
+    {
+      label: 'Órdenes Completadas',
+      value: personal.reduce((sum, p) => sum + p.ordenesCompletadas, 0),
       color: 'text-[#FF6B00]',
       icon: Award
     }
@@ -223,7 +237,7 @@ export default function TechnicalPersonnel() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Encabezado principal del módulo */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-gray-900">Personal Técnico</h2>
@@ -235,7 +249,7 @@ export default function TechnicalPersonnel() {
         </button>
       </div>
 
-      {/* Estadísticas */}
+      {/* Tarjetas de resumen */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
@@ -251,7 +265,7 @@ export default function TechnicalPersonnel() {
         })}
       </div>
 
-      {/* Filtros */}
+      {/* Sección de búsqueda y filtros */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
@@ -298,15 +312,15 @@ export default function TechnicalPersonnel() {
         </div>
       </div>
 
-      {/* Tarjetas de Personal */}
+      {/* Tarjetas individuales del personal técnico */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredPersonal.map((p) => {
           const estadoConfig = getEstadoConfig(p.estado);
           const EstadoIcon = estadoConfig.icon;
-          
+
           return (
             <div key={p.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-              {/* Header Card */}
+              {/* Encabezado de la tarjeta del técnico */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-1">
@@ -320,14 +334,14 @@ export default function TechnicalPersonnel() {
                 </div>
               </div>
 
-              {/* Especialidad */}
+              {/* Especialidad principal */}
               <div className="mb-4">
                 <span className={`inline-flex px-3 py-1 rounded-full text-xs ${getEspecialidadColor(p.especialidad)}`}>
                   {p.especialidad.charAt(0).toUpperCase() + p.especialidad.slice(1)}
                 </span>
               </div>
 
-              {/* Información de Contacto */}
+              {/* Información de contacto */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
                   <Phone className="w-4 h-4 text-gray-400" />
@@ -339,7 +353,7 @@ export default function TechnicalPersonnel() {
                 </div>
               </div>
 
-              {/* Certificaciones */}
+              {/* Certificaciones del técnico */}
               <div className="mb-4">
                 <div className="flex items-center space-x-2 mb-2">
                   <Award className="w-4 h-4 text-gray-400" />
@@ -359,7 +373,7 @@ export default function TechnicalPersonnel() {
                 </div>
               </div>
 
-              {/* Estadísticas */}
+              {/* Resumen de órdenes asignadas y completadas */}
               <div className="grid grid-cols-2 gap-3 pt-4 border-t border-gray-200">
                 <div>
                   <p className="text-xs text-gray-600 mb-1">Asignadas</p>
@@ -371,7 +385,7 @@ export default function TechnicalPersonnel() {
                 </div>
               </div>
 
-              {/* Disponibilidad */}
+              {/* Estado de disponibilidad del técnico */}
               <div className="mt-4 pt-4 border-t border-gray-200">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-600">Disponibilidad</span>

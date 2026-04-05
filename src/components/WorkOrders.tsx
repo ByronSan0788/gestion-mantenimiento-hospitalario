@@ -4,6 +4,7 @@ import { Search, Plus, Filter, Edit, Trash2, Eye, CheckCircle, Clock, AlertCircl
 type OrdenEstado = 'pendiente' | 'en-proceso' | 'completada' | 'cancelada';
 type OrdenPrioridad = 'baja' | 'media' | 'alta' | 'critica';
 
+// Estructura de datos para representar una orden de trabajo
 interface Orden {
   id: string;
   codigo: string;
@@ -17,10 +18,16 @@ interface Orden {
 }
 
 export default function WorkOrders() {
+  // Estado para almacenar el texto ingresado en la búsqueda
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Estado para controlar el filtro por estado de la orden
   const [filterEstado, setFilterEstado] = useState<OrdenEstado | 'todas'>('todas');
+
+  // Estado para mostrar u ocultar el modal de nueva orden
   const [showModal, setShowModal] = useState(false);
 
+  // Datos simulados de órdenes de trabajo para mostrar la funcionalidad del módulo
   const [ordenes] = useState<Orden[]>([
     {
       id: '1',
@@ -79,6 +86,7 @@ export default function WorkOrders() {
     }
   ]);
 
+  // Función para asignar estilos visuales según la prioridad de la orden
   const getPrioridadColor = (prioridad: OrdenPrioridad) => {
     const colors = {
       baja: 'bg-gray-100 text-gray-700',
@@ -89,6 +97,7 @@ export default function WorkOrders() {
     return colors[prioridad];
   };
 
+  // Función para definir color, icono y etiqueta según el estado de la orden
   const getEstadoConfig = (estado: OrdenEstado) => {
     const configs = {
       pendiente: {
@@ -115,14 +124,19 @@ export default function WorkOrders() {
     return configs[estado];
   };
 
+  // Filtro dinámico para buscar órdenes por código, equipo, descripción y estado
   const filteredOrdenes = ordenes.filter(orden => {
-    const matchesSearch = orden.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         orden.equipo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         orden.descripcion.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      orden.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      orden.equipo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      orden.descripcion.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesEstado = filterEstado === 'todas' || orden.estado === filterEstado;
+
     return matchesSearch && matchesEstado;
   });
 
+  // Tarjetas de resumen con el total de órdenes por estado
   const stats = [
     { label: 'Total', value: ordenes.length, color: 'text-gray-700' },
     { label: 'Pendientes', value: ordenes.filter(o => o.estado === 'pendiente').length, color: 'text-yellow-600' },
@@ -132,12 +146,14 @@ export default function WorkOrders() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Encabezado principal del módulo */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-gray-900">Órdenes de Trabajo</h2>
           <p className="text-gray-600">Gestión y seguimiento de órdenes de mantenimiento</p>
         </div>
+
+        {/* Botón para abrir el formulario modal de nueva orden */}
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center justify-center space-x-2 px-6 py-3 bg-[#FF6B00] hover:bg-[#E56100] text-white rounded-xl transition-all shadow-lg"
@@ -147,7 +163,7 @@ export default function WorkOrders() {
         </button>
       </div>
 
-      {/* Estadísticas */}
+      {/* Tarjetas de resumen del módulo */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
           <div key={index} className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
@@ -157,7 +173,7 @@ export default function WorkOrders() {
         ))}
       </div>
 
-      {/* Filtros y Búsqueda */}
+      {/* Sección de búsqueda y filtros */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="relative">
@@ -188,7 +204,7 @@ export default function WorkOrders() {
         </div>
       </div>
 
-      {/* Tabla de Órdenes */}
+      {/* Tabla principal de órdenes de trabajo */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -204,11 +220,12 @@ export default function WorkOrders() {
                 <th className="px-6 py-4 text-left text-xs text-gray-600 uppercase tracking-wider">Acciones</th>
               </tr>
             </thead>
+
             <tbody className="divide-y divide-gray-200">
               {filteredOrdenes.map((orden) => {
                 const estadoConfig = getEstadoConfig(orden.estado);
                 const EstadoIcon = estadoConfig.icon;
-                
+
                 return (
                   <tr key={orden.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -237,6 +254,8 @@ export default function WorkOrders() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                       {new Date(orden.fechaEstimada).toLocaleDateString('es-ES')}
                     </td>
+
+                    {/* Botones de acción para consultar, editar o eliminar */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="flex items-center space-x-2">
                         <button className="p-2 hover:bg-blue-50 rounded-lg transition-colors group">
@@ -258,18 +277,23 @@ export default function WorkOrders() {
         </div>
       </div>
 
-      {/* Modal de Nueva Orden */}
+      {/* Ventana modal para crear una nueva orden de trabajo */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200">
               <h3 className="text-gray-900">Nueva Orden de Trabajo</h3>
             </div>
+
+            {/* Formulario básico de creación de orden */}
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm text-gray-700 mb-2">Equipo</label>
-                  <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6B00] outline-none" />
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6B00] outline-none"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm text-gray-700 mb-2">Prioridad</label>
@@ -283,9 +307,14 @@ export default function WorkOrders() {
               </div>
               <div>
                 <label className="block text-sm text-gray-700 mb-2">Descripción</label>
-                <textarea rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6B00] outline-none"></textarea>
+                <textarea
+                  rows={4}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6B00] outline-none"
+                ></textarea>
               </div>
             </div>
+
+            {/* Botones para cerrar o confirmar la creación */}
             <div className="p-6 border-t border-gray-200 flex justify-end space-x-4">
               <button
                 onClick={() => setShowModal(false)}
