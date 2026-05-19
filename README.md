@@ -1,73 +1,158 @@
-# React + TypeScript + Vite
+# Sistema de Gestión de Mantenimiento Hospitalario
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Descripción del proyecto
+Este proyecto corresponde al desarrollo de un sistema de gestión de mantenimiento hospitalario, orientado a la administración de información relacionada con equipos, técnicos y órdenes de trabajo.
 
-Currently, two official plugins are available:
+La solución se encuentra estructurada en dos partes:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Frontend** desarrollado en React con TypeScript y Vite.
+- **Backend** desarrollado en Spring Boot con Java, bajo arquitectura API REST.
 
-## React Compiler
+El backend permite realizar operaciones de consulta, registro, actualización y eliminación de información, con persistencia en base de datos MySQL y validaciones sobre los datos recibidos.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Objetivo del proyecto
+Desarrollar una API REST para el sistema de gestión de mantenimiento hospitalario, permitiendo administrar equipos, técnicos y órdenes de trabajo, con persistencia en base de datos y pruebas funcionales mediante Postman.
 
-## Expanding the ESLint configuration
+## Tecnologías utilizadas
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Frontend
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- CSS
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Backend
+- Java 17
+- Spring Boot 3.5.13
+- Spring Web
+- Spring Data JPA
+- MySQL Driver
+- Validation
+- Lombok
+- Maven
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Base de datos
+- MySQL
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Herramientas de apoyo
+- Visual Studio Code
+- MySQL Workbench
+- Postman
+- Git
+- GitHub
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Estructura general del proyecto
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```text
+GESTION-MANTENIMIENTO-HOSPITALARIO/
+├── backend/
+│   ├── .mvn/
+│   ├── src/
+│   ├── pom.xml
+│   ├── mvnw
+│   └── mvnw.cmd
+├── public/
+├── src/
+├── package.json
+├── vite.config.ts
+└── README.md
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Requisitos previos
+Antes de ejecutar el proyecto, se debe tener instalado:
+
+- Node.js
+- Java 17
+- MySQL Server
+- MySQL Workbench
+- Git
+
+## Configuración de la base de datos
+
+Crear la base de datos en MySQL con el siguiente comando:
+
+```sql
+CREATE DATABASE gestion_mantenimiento_hospitalario;
+
+## Configuración y ejecución del proyecto
+
+### Base de datos
+El proyecto utiliza la base de datos MySQL llamada:
+
+`gestion_mantenimiento_hospitalario`
+
+La conexión del backend se configura en el archivo:
+
+`backend/src/main/resources/application.properties`
+
+### Ejecución del frontend
+Ubicado en la raíz del proyecto, ejecutar:
+
+```bash
+npm install
+npm run dev
+
+Ejecución del backend:
+.\mvnw.cmd spring-boot:run
+
+
+## Endpoints principales desarrollados
+
+### Módulo de equipos
+- `GET /api/equipos`
+- `POST /api/equipos`
+- `GET /api/equipos/{id}`
+- `PUT /api/equipos/{id}`
+- `DELETE /api/equipos/{id}`
+
+### Módulo de usuarios
+- `POST /api/usuarios/registro`
+- `GET /api/usuarios`
+- `GET /api/usuarios/{id}`
+
+### Módulo de órdenes de trabajo
+- `GET /api/ordenes-trabajo`
+- `POST /api/ordenes-trabajo`
+- `GET /api/ordenes-trabajo/{id}`
+- `PUT /api/ordenes-trabajo/{id}`
+- `DELETE /api/ordenes-trabajo/{id}`
+
+## Validaciones implementadas
+En la API se implementaron validaciones sobre campos obligatorios y formatos de datos, utilizando anotaciones como:
+
+- `@NotBlank`
+- `@Size`
+- `@Email`
+
+Estas validaciones permiten responder con errores controlados cuando se envía información incompleta o inválida.
+
+## Pruebas realizadas
+Las pruebas funcionales de la API se realizaron con Postman, verificando:
+
+- consulta de registros
+- creación de registros
+- actualización de registros
+- eliminación de registros
+- validaciones con respuestas de error
+
+## Versionamiento
+El proyecto fue gestionado con herramientas de versionamiento:
+
+- **Git** para el control local de cambios
+- **GitHub** para el repositorio remoto
+
+## Estado del proyecto
+Actualmente el proyecto cuenta con:
+
+- Backend funcional en Spring Boot
+- Conexión a MySQL
+- API REST implementada para usuaruis, equipos, técnicos y órdenes de trabajo
+- Validaciones básicas
+- Pruebas funcionales realizadas en Postman
+- Versionamiento local y remoto
+
+
+
+## Autor
+**Bayron José Saumett Reyes**  
+Programa: Análisis y Desarrollo de Software
